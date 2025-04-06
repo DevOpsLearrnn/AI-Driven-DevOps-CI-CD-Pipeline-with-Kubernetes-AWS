@@ -4,7 +4,8 @@ pipeline {
     stages {
         stage('Clone Repo') {
             steps {
-                git 'https://github.com/DevOpsLearrnn/AI-Driven-DevOps-CI-CD-Pipeline-with-Kubernetes-AWS.git'
+                git 'https://github.com/DevOpsLearrnn/AI-Driven-DevOps-CI-CD-Pipeline-with-Kubernetes-AWS.git',
+                    branch: 'main'
             }
         }
 

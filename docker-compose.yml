@@ -1,0 +1,8 @@
+version: '3'
+services:
+  fastapi:
+    image: fastapi-app:latest  # Local image
+    ports:
+      - "8000:8000"
+    restart: always
+
