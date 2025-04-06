@@ -1,28 +1,29 @@
 pipeline {
     agent any
-
+    environment {
+        IMAGE_NAME = "afr273/fastapi-app"
+        IMAGE_TAG = "v2"
+    }
     stages {
-        stage('Clone Repo') {
-            steps {
-                    git branch: 'main', url: 'https://github.com/DevOpsLearrnn/AI-Driven-DevOps-CI-CD-Pipeline-with-Kubernetes-AWS.git'
-
-            }
-        }
-
         stage('Build Docker Image') {
             steps {
-                script {
-                    sh 'docker build -t fastapi-app .'
-                }
+                sh "docker build -t ${IMAGE_NAME}:${IMAGE_TAG} ."
             }
         }
-
-        stage('Run Docker Container') {
+        stage('Push to DockerHub') {
             steps {
-                script {
-                    sh 'docker run -d -p 8000:8000 --name fastapi-app fastapi-app'
+                withCredentials([usernamePassword(credentialsId: 'dockerhub-creds', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
+                    sh 'echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin'
+                    sh "docker push ${IMAGE_NAME}:${IMAGE_TAG}"
                 }
             }
         }
+        // Optional deploy stage below:
+        // stage('Deploy') {
+        //     steps {
+        //         sh 'kubectl apply -f deployment.yaml'
+        //     }
+        // }
     }
 }
+
