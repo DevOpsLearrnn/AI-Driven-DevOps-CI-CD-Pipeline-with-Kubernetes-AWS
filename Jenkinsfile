@@ -2,7 +2,7 @@ pipeline {
     agent any
     environment {
         IMAGE_NAME = "afr273/fastapi-app"
-        IMAGE_TAG = "v2"
+        IMAGE_TAG = "v2${BUILD_NUMBER}"
     }
     stages {
         stage('Build Docker Image') {
