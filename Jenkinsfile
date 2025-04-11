@@ -1,34 +1,29 @@
 pipeline {
     agent any
-    environment {
-        IMAGE_NAME = "afr273/fastapi-app"
-        IMAGE_TAG = "v2${BUILD_NUMBER}"
-    }
+
     stages {
-        stage('Build Docker Image') {
+        stage('Clone') {
             steps {
-                sh "docker build -t ${IMAGE_NAME}:${IMAGE_TAG} ."
+                git branch: 'main', url: 'https://github.com/DevOpsLearrnn/AI-Driven-DevOps-CI-CD-Pipeline.git'
             }
         }
-        stage('Push to DockerHub') {
+
+        stage('Build') {
             steps {
-                withCredentials([usernamePassword(credentialsId: 'dockerhub-creds', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
-                    sh 'echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin'
-                    sh "docker push ${IMAGE_NAME}:${IMAGE_TAG}"
-                }
+                echo 'Building the application...'
             }
         }
+
+        stage('Test') {
+            steps {
+                echo 'Running tests...'
+            }
+        }
+
         stage('Deploy') {
             steps {
-                sh 'kubectl apply -f deployment.yaml'
-                sh 'kubectl apply -f service.yaml'
+                echo 'Deploying the application...'
             }
-        }
-    }
-
-    post {
-        always {
-            sh "docker rmi ${IMAGE_NAME}:${IMAGE_TAG} || true"
         }
     }
 }
